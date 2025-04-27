@@ -399,5 +399,4 @@ Common Issues
 This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## 📞 Contact
-For questions or support, please open an issue on the GitHub repository.#   l e g a l - a i - b e n c h m a r k e r  
- 
+For questions or support, please open an issue on the GitHub repository.
