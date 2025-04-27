@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legal AI Benchmarker Dashboard</title>
+    <!-- Chart.js for basic charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- ApexCharts for better radar charts -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background-color: #1a73e8;
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1, h2, h3 {
+            margin-top: 0;
+        }
+        .benchmark-form {
+            background-color: white;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        input:focus, textarea:focus {
+            border-color: #1a73e8;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+        }
+        button {
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0d47a1;
+        }
+        .charts-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        .chart {
+            flex: 1 1 calc(50% - 25px);
+            min-width: 300px;
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+        }
+        .model-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+            transition: transform 0.2s;
+        }
+        .model-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.12);
+        }
+        .model-card h4 {
+            color: #1a73e8;
+            margin-top: 0;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .response-time {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .evaluation {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+            background-color: #f8f9fa;
+            padding: 12px;
+            border-radius: 6px;
+        }
+        .evaluation div {
+            margin-bottom: 5px;
+        }
+        .loading {
+            text-align: center;
+            padding: 30px;
+            font-style: italic;
+            color: #666;
+        }
+        .error {
+            color: #d32f2f;
+            padding: 15px;
+            background-color: #ffebee;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .social-impact {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #e8f0fe;
+            border-radius: 6px;
+            border-left: 4px solid #1a73e8;
+        }
+        .social-impact h5 {
+            margin-top: 0;
+            color: #1a73e8;
+        }
+        .social-impact ul {
+            padding-left: 20px;
+        }
+        .social-impact li {
+            margin-bottom: 5px;
+        }
+        .answer {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        .answer h5 {
+            margin-top: 0;
+        }
+        .impact-meter {
+            height: 8px;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+        .impact-meter-fill {
+            height: 100%;
+            background-color: #1a73e8;
+            border-radius: 4px;
+        }
+        .section-title {
+            position: relative;
+            padding-left: 15px;
+            margin: 30px 0 20px;
+        }
+        .section-title::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 5px;
+            background-color: #1a73e8;
+            border-radius: 3px;
+        }
+        .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .impact-item {
+            background-color: #f5f5f5;
+            padding: 12px;
+            border-radius: 6px;
+        }
+        .impact-item h6 {
+            margin-top: 0;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Legal AI Model Benchmarker</h1>
+            <p>Compare AI models on legal questions with access to justice metrics</p>
+        </header>
+        
+        <main>
+            <section class="benchmark-form">
+                <h2>Run New Benchmark</h2>
+                <form id="benchmarkForm">
+                    <div class="form-group">
+                        <label for="question">Legal Question:</label>
+                        <textarea id="question" name="question" rows="3" placeholder="e.g., What are my rights as a tenant?" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="keywords">Expected Keywords (comma-separated):</label>
+                        <input type="text" id="keywords" name="keywords" placeholder="e.g., tenant, rights, notice, deposit, eviction">
+                    </div>
+                    <button type="submit">Run Benchmark</button>
+                </form>
+            </section>
+            
+            <section class="results">
+                <h2 class="section-title">Results</h2>
+                <div class="charts-container">
+                    <div class="chart">
+                        <h3>Response Time</h3>
+                        <canvas id="responseTimeChart"></canvas>
+                    </div>
+                    <div class="chart">
+                        <h3>Keyword Match</h3>
+                        <canvas id="keywordMatchChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="charts-container">
+                    <div class="chart">
+                        <h3>Social Impact Comparison</h3>
+                        <!-- Replaced radar chart with a more reliable bar chart -->
+                        <canvas id="socialImpactBarChart"></canvas>
+                    </div>
+                    <div class="chart">
+                        <h3>Access to Justice Radar</h3>
+                        <!-- Using ApexCharts for better radar chart support -->
+                        <div id="apexRadarChart"></div>
+                    </div>
+                </div>
+                
+                <h3 class="section-title">Model Responses</h3>
+                <div id="responseContainer"></div>
+            </section>
+        </main>
+    </div>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const benchmarkForm = document.getElementById('benchmarkForm');
+        let responseTimeChart, keywordMatchChart, socialImpactBarChart, apexRadarChart;
+        
+        // Sample data for demo purposes (can be removed later)
+        const sampleQuestions = [
+            "What is the process for filing an RTI application?",
+            "What are my rights as a tenant under rent control laws?",
+            "How do I file a domestic violence complaint?",
+            "What documents do I need for a property dispute?"
+        ];
+        
+        // Populate a random question for demo purposes
+        document.getElementById('question').value = sampleQuestions[Math.floor(Math.random() * sampleQuestions.length)];
+        
+        benchmarkForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const question = document.getElementById('question').value;
+            const keywordsInput = document.getElementById('keywords').value;
+            const keywords = keywordsInput ? keywordsInput.split(',').map(k => k.trim()) : [];
+            
+            // Show loading indicator
+            document.getElementById('responseContainer').innerHTML = '<div class="loading">Running benchmark...<br><small>This may take a few moments</small></div>';
+            
+            try {
+                const response = await fetch('/benchmark', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        question: question,
+                        expected_keywords: keywords.length > 0 ? keywords : null
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                
+                const data = await response.json();
+                renderResults(data);
+            } catch (error) {
+                document.getElementById('responseContainer').innerHTML = `<div class="error">Error: ${error.message}</div>`;
+            }
+        });
+        
+        function renderResults(data) {
+            // Render model responses
+            const responseContainer = document.getElementById('responseContainer');
+            responseContainer.innerHTML = '';
+            
+            data.models.forEach(result => {
+                const modelCard = document.createElement('div');
+                modelCard.className = 'model-card';
+                
+                // Build basic info HTML
+                let cardHTML = `
+                    <h4>${result.model_name}</h4>
+                    <div class="response-time">Response time: ${result.response_time_ms.toFixed(2)}ms</div>
+                    <div class="evaluation">
+                        <div>Keyword match: ${result.keyword_coverage.toFixed(1)}%</div>
+                `;
+                
+                // Add confidence score if available
+                if (result.confidence_score !== undefined) {
+                    cardHTML += `<div>Confidence: ${result.confidence_score.toFixed(1)}%</div>`;
+                }
+                
+                cardHTML += `</div>`;
+                
+                // Add social impact metrics if available with a better visual presentation
+                if (result.social_impact_metrics) {
+                    const metrics = result.social_impact_metrics;
+                    cardHTML += `
+                    <div class="social-impact">
+                        <h5>Access to Justice Metrics</h5>
+                        <div class="impact-grid">
+                            <div class="impact-item">
+                                <h6>Language Simplicity</h6>
+                                <div class="impact-meter">
+                                    <div class="impact-meter-fill" style="width: ${metrics.language_simplicity}%;"></div>
+                                </div>
+                                <div>${metrics.language_simplicity.toFixed(1)}%</div>
+                            </div>
+                            <div class="impact-item">
+                                <h6>Actionable Guidance</h6>
+                                <div class="impact-meter">
+                                    <div class="impact-meter-fill" style="width: ${metrics.actionable_guidance}%;"></div>
+                                </div>
+                                <div>${metrics.actionable_guidance.toFixed(1)}%</div>
+                            </div>
+                            <div class="impact-item">
+                                <h6>Cultural Relevance</h6>
+                                <div class="impact-meter">
+                                    <div class="impact-meter-fill" style="width: ${metrics.cultural_relevance}%;"></div>
+                                </div>
+                                <div>${metrics.cultural_relevance.toFixed(1)}%</div>
+                            </div>
+                            <div class="impact-item">
+                                <h6>Accessibility</h6>
+                                <div class="impact-meter">
+                                    <div class="impact-meter-fill" style="width: ${metrics.accessibility}%;"></div>
+                                </div>
+                                <div>${metrics.accessibility.toFixed(1)}%</div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 15px; font-weight: bold;">
+                            Overall Impact: ${metrics.overall_social_impact.toFixed(1)}%
+                            <div class="impact-meter">
+                                <div class="impact-meter-fill" style="width: ${metrics.overall_social_impact}%; background-color: #4CAF50;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    `;
+                }
+                
+                // Add the answer
+                cardHTML += `
+                    <div class="answer">
+                        <h5>Answer:</h5>
+                        <p>${result.answer}</p>
+                    </div>
+                `;
+                
+                modelCard.innerHTML = cardHTML;
+                responseContainer.appendChild(modelCard);
+            });
+            
+            // Update charts
+            updateCharts(data.models);
+        }
+        
+        function updateCharts(results) {
+            // Destroy existing charts if they exist
+            if (responseTimeChart) responseTimeChart.destroy();
+            if (keywordMatchChart) keywordMatchChart.destroy();
+            if (socialImpactBarChart) socialImpactBarChart.destroy();
+            if (apexRadarChart) apexRadarChart.destroy();
+            
+            // Response time chart
+            const responseTimeCtx = document.getElementById('responseTimeChart').getContext('2d');
+            responseTimeChart = new Chart(responseTimeCtx, {
+                type: 'bar',
+                data: {
+                    labels: results.map(r => r.model_name),
+                    datasets: [{
+                        label: 'Response Time (ms)',
+                        data: results.map(r => r.response_time_ms),
+                        backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                        borderColor: 'rgb(54, 162, 235)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Time (ms)'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Keyword match chart
+            const keywordMatchCtx = document.getElementById('keywordMatchChart').getContext('2d');
+            keywordMatchChart = new Chart(keywordMatchCtx, {
+                type: 'bar',
+                data: {
+                    labels: results.map(r => r.model_name),
+                    datasets: [{
+                        label: 'Keyword Match (%)',
+                        data: results.map(r => r.keyword_coverage),
+                        backgroundColor: 'rgba(75, 192, 192, 0.7)',
+                        borderColor: 'rgb(75, 192, 192)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: 'Coverage (%)'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Only create social impact charts if we have metrics
+            if (results.some(r => r.social_impact_metrics)) {
+                // 1. Create a grouped bar chart for social impact (more reliable than radar)
+                const socialImpactCtx = document.getElementById('socialImpactBarChart').getContext('2d');
+                
+                // Prepare data for the grouped bar chart
+                const labels = ['Language Simplicity', 'Actionable Guidance', 'Cultural Relevance', 'Accessibility', 'Overall Impact'];
+                const datasets = results.map((result, index) => {
+                    // Use different colors for each model
+                    const colors = [
+                        { bg: 'rgba(54, 162, 235, 0.7)', border: 'rgb(54, 162, 235)' },
+                        { bg: 'rgba(255, 99, 132, 0.7)', border: 'rgb(255, 99, 132)' },
+                        { bg: 'rgba(75, 192, 192, 0.7)', border: 'rgb(75, 192, 192)' },
+                        { bg: 'rgba(255, 206, 86, 0.7)', border: 'rgb(255, 206, 86)' }
+                    ];
+                    
+                    const colorIndex = index % colors.length;
+                    
+                    // Get metrics or use placeholders
+                    const metrics = result.social_impact_metrics || {
+                        language_simplicity: 0,
+                        actionable_guidance: 0,
+                        cultural_relevance: 0,
+                        accessibility: 0,
+                        overall_social_impact: 0
+                    };
+                    
+                    return {
+                        label: result.model_name,
+                        data: [
+                            metrics.language_simplicity || 0,
+                            metrics.actionable_guidance || 0, 
+                            metrics.cultural_relevance || 0,
+                            metrics.accessibility || 0,
+                            metrics.overall_social_impact || 0
+                        ],
+                        backgroundColor: colors[colorIndex].bg,
+                        borderColor: colors[colorIndex].border,
+                        borderWidth: 1
+                    };
+                });
+                
+                socialImpactBarChart = new Chart(socialImpactCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: datasets
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                title: {
+                                    display: true,
+                                    text: 'Score (%)'
+                                }
+                            }
+                        }
+                    }
+                });
+                
+                // 2. Also create an ApexCharts radar chart (more reliable than Chart.js radar)
+                // Prepare the data for ApexCharts
+                const apexSeries = results.map(result => {
+                    const metrics = result.social_impact_metrics || {
+                        language_simplicity: 0,
+                        actionable_guidance: 0,
+                        cultural_relevance: 0,
+                        accessibility: 0
+                    };
+                    
+                    return {
+                        name: result.model_name,
+                        data: [
+                            metrics.language_simplicity || 0,
+                            metrics.actionable_guidance || 0,
+                            metrics.cultural_relevance || 0,
+                            metrics.accessibility || 0
+                        ]
+                    };
+                });
+                
+                const apexOptions = {
+                    series: apexSeries,
+                    chart: {
+                        height: 350,
+                        type: 'radar',
+                        toolbar: {
+                            show: false
+                        }
+                    },
+                    title: {
+                        text: ''
+                    },
+                    xaxis: {
+                        categories: ['Language Simplicity', 'Actionable Guidance', 'Cultural Relevance', 'Accessibility']
+                    },
+                    yaxis: {
+                        max: 100
+                    },
+                    colors: ['#1a73e8', '#e53935', '#4caf50', '#ff9800'],
+                    stroke: {
+                        width: 2
+                    },
+                    fill: {
+                        opacity: 0.2
+                    },
+                    markers: {
+                        size: 4
+                    }
+                };
+                
+                // Clear previous chart if any
+                document.getElementById('apexRadarChart').innerHTML = '';
+                
+                // Create the ApexChart
+                apexRadarChart = new ApexCharts(document.getElementById('apexRadarChart'), apexOptions);
+                apexRadarChart.render();
+            }
+        }
+    });
+    </script>
+</body>
+</html>

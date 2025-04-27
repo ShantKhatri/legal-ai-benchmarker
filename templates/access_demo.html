@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access to Justice Demo - Legal AI Benchmarker</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background-color: #2f3e9e;
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+        }
+        .use-case {
+            border-left: 4px solid #2f3e9e;
+            padding-left: 15px;
+            margin: 20px 0;
+        }
+        .scenario {
+            background-color: #e8f0fe;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .metric-item {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2f3e9e;
+        }
+        .metric-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        .chart {
+            height: 350px;
+            margin: 30px 0;
+        }
+        .btn {
+            display: inline-block;
+            background-color: #2f3e9e;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .btn:hover {
+            background-color: #1a237e;
+        }
+        .response {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .impact-meter {
+            height: 8px;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            margin: 5px 0 15px;
+            overflow: hidden;
+        }
+        .impact-meter-fill {
+            height: 100%;
+            background-color: #2f3e9e;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Access to Justice Demo</h1>
+            <p>Benchmarking AI models on their ability to provide accessible legal information</p>
+        </header>
+        
+        <div class="card">
+            <h2>Why Access to Justice Matters</h2>
+            <p>In India, millions of citizens face significant barriers when accessing legal aid and information:</p>
+            <ul>
+                <li>Complex legal language that's difficult to understand</li>
+                <li>Limited access to affordable legal counsel</li>
+                <li>Procedural complexity creating barriers to justice</li>
+                <li>Geographic and linguistic barriers</li>
+            </ul>
+            <p>Our Legal AI Benchmarker helps identify which AI models best provide accessible, actionable, and culturally relevant legal information to those who need it most.</p>
+        </div>
+        
+        <div class="card">
+            <h2>Common Access to Justice Use Cases</h2>
+            
+            <div class="use-case">
+                <h3>1. Domestic Violence Support</h3>
+                <div class="scenario">
+                    <p><strong>Question:</strong> "How do I file a domestic violence complaint in India?"</p>
+                </div>
+                <div class="response">
+                    <h4>Model Response: OpenAI (gpt-3.5-turbo)</h4>
+                    <p>To file a domestic violence complaint in India, follow these steps:</p>
+                    <ol>
+                        <li><strong>Visit your nearest police station</strong> to file an FIR (First Information Report)</li>
+                        <li>Alternatively, you can approach a <strong>Protection Officer</strong> appointed under the Protection of Women from Domestic Violence Act</li>
+                        <li>You can also file a complaint directly with a <strong>Magistrate</strong> under Section 12 of the DV Act</li>
+                        <li>Free <strong>legal aid</strong> is available through Legal Services Authorities</li>
+                        <li>Women's helpline number <strong>181</strong> can provide immediate assistance</li>
+                    </ol>
+                    <p>You don't need to pay any fees for filing domestic violence complaints, and the police are legally obligated to register your complaint.</p>
+                    
+                    <h4>Access to Justice Metrics:</h4>
+                    <div>
+                        <span>Language Simplicity: 84.2%</span>
+                        <div class="impact-meter">
+                            <div class="impact-meter-fill" style="width: 84.2%;"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <span>Actionable Guidance: 92.5%</span>
+                        <div class="impact-meter">
+                            <div class="impact-meter-fill" style="width: 92.5%;"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <span>Cultural Relevance: 88.7%</span>
+                        <div class="impact-meter">
+                            <div class="impact-meter-fill" style="width: 88.7%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="use-case">
+                <h3>2. RTI Application Process</h3>
+                <div class="scenario">
+                    <p><strong>Question:</strong> "How do I file an RTI application?"</p>
+                </div>
+                <div class="response">
+                    <h4>Model Response: Legal LLM (phi-1_5)</h4>
+                    <p>Filing an RTI (Right to Information) application in India is a simple process:</p>
+                    <ol>
+                        <li><strong>Write your application</strong> in English, Hindi, or your local official language</li>
+                        <li><strong>Include your contact details</strong> and the information you're requesting</li>
+                        <li>Pay the <strong>application fee of Rs. 10</strong> (fee is waived for BPL applicants)</li>
+                        <li><strong>Submit your application</strong> to the Public Information Officer (PIO) of the concerned department</li>
+                        <li>You should receive a response within <strong>30 days</strong></li>
+                    </ol>
+                    <p>You can also file RTIs online through the RTI Portal: <u>https://rtionline.gov.in</u></p>
+                    
+                    <h4>Access to Justice Metrics:</h4>
+                    <div>
+                        <span>Language Simplicity: 79.5%</span>
+                        <div class="impact-meter">
+                            <div class="impact-meter-fill" style="width: 79.5%;"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <span>Actionable Guidance: 85.3%</span>
+                        <div class="impact-meter">
+                            <div class="impact-meter-fill" style="width: 85.3%;"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <span>Cultural Relevance: 90.1%</span>
+                        <div class="impact-meter">
+                            <div class="impact-meter-fill" style="width: 90.1%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="use-case">
+                <h3>3. Tenant Rights</h3>
+                <div class="scenario">
+                    <p><strong>Question:</strong> "What are my rights as a tenant in Delhi?"</p>
+                </div>
+                <div class="response">
+                    <h4>Model Comparison</h4>
+                    <div id="tenantRightsChart" class="chart"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Impact Analysis</h2>
+            <div class="metrics">
+                <div class="metric-item">
+                    <div class="metric-value">84%</div>
+                    <div class="metric-label">Average Language Simplicity</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value">88%</div>
+                    <div class="metric-label">Average Actionable Guidance</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value">89%</div>
+                    <div class="metric-label">Average Cultural Relevance</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value">78%</div>
+                    <div class="metric-label">Average Accessibility Score</div>
+                </div>
+            </div>
+            
+            <p>Our benchmarking reveals that specialized legal LLMs provide the most balanced performance across all access to justice metrics. OpenAI models excel at simplicity and actionability, while Indian-specific models show higher cultural relevance.</p>
+            
+            <div id="overallComparisonChart" class="chart"></div>
+            
+            <a href="/dashboard" class="btn">Try the Full Benchmarker</a>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tenant Rights Chart
+            const tenantRightsOptions = {
+                series: [{
+                    name: 'Language Simplicity',
+                    data: [76, 85, 62, 79]
+                }, {
+                    name: 'Actionable Guidance',
+                    data: [68, 92, 58, 83]
+                }, {
+                    name: 'Cultural Relevance',
+                    data: [82, 76, 95, 89]
+                }, {
+                    name: 'Accessibility',
+                    data: [75, 80, 70, 77]
+                }],
+                chart: {
+                    type: 'bar',
+                    height: 350,
+                    toolbar: {
+                        show: false
+                    }
+                },
+                plotOptions: {
+                    bar: {
+                        horizontal: false,
+                        columnWidth: '55%',
+                        endingShape: 'rounded'
+                    },
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                stroke: {
+                    show: true,
+                    width: 2,
+                    colors: ['transparent']
+                },
+                xaxis: {
+                    categories: ['HuggingFace', 'OpenAI', 'Simplified', 'Legal LLM'],
+                },
+                yaxis: {
+                    title: {
+                        text: 'Score (%)'
+                    },
+                    min: 0,
+                    max: 100
+                },
+                fill: {
+                    opacity: 1
+                },
+                tooltip: {
+                    y: {
+                        formatter: function (val) {
+                            return val + "%"
+                        }
+                    }
+                },
+                colors: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e']
+            };
+            
+            const tenantRightsChart = new ApexCharts(document.querySelector("#tenantRightsChart"), tenantRightsOptions);
+            tenantRightsChart.render();
+            
+            // Overall Comparison Chart
+            const overallComparisonOptions = {
+                series: [{
+                    name: 'Overall Social Impact Score',
+                    data: [72, 88, 65, 83, 60]
+                }],
+                chart: {
+                    height: 350,
+                    type: 'radar',
+                    toolbar: {
+                        show: false
+                    }
+                },
+                xaxis: {
+                    categories: ['Domestic Violence', 'RTI Applications', 'Tenant Rights', 'Property Disputes', 'Labor Laws']
+                },
+                yaxis: {
+                    show: false,
+                    min: 0,
+                    max: 100
+                },
+                fill: {
+                    opacity: 0.4
+                },
+                markers: {
+                    size: 5
+                },
+                title: {
+                    text: 'Model Performance Across Legal Topics',
+                    align: 'center',
+                    style: {
+                        fontSize: '16px'
+                    }
+                }
+            };
+            
+            const overallComparisonChart = new ApexCharts(document.querySelector("#overallComparisonChart"), overallComparisonOptions);
+            overallComparisonChart.render();
+        });
+    </script>
+</body>
+</html>
